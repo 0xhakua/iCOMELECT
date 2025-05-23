@@ -1,0 +1,969 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CTUBAR COMELEC MASTERLIST</title>
+  <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+  
+  <div id="sidebar">
+    <div class="sidebar-header">
+    <img src="https://i.ibb.co/qYp4xfLQ/Layer-0.png" alt="iCOMELECT Logo" class="sidebar-logo" />
+    <h1 class="sidebar-title">iCOMELECT</h1>
+    </div>
+ <ul>
+  <li data-section="analytics" onclick="navigateTo('analytics')">Analytics</li>
+  <li data-section="fetch" onclick="navigateTo('fetch')">Fetch Students</li>
+  <li data-section="students" onclick="navigateTo('students')">Vote Record</li>
+  <li data-section="candidates" onclick="navigateTo('candidates')">Candidates</li>
+</ul>
+  </div>
+
+
+<!-- analyticsSection -->
+<div id="analyticsSection" class="section analytics-section">
+  <div class="analytics-card">
+
+ <!-- Stats Row -->
+    <div class="stats-row">
+      <div><strong>Total Students:</strong> <span id="totalStudents">0</span></div>
+      <div class="right"><strong>Total Students Voted: </strong><span id="votedStudents">0</span></div>
+    </div>
+
+    <!-- Progress Bar -->
+    <div class="progress-bar">
+      <div id="votedBar" class="progress-fill" style="width: 0%;"></div>
+    </div>
+
+    <!-- Percentage Text -->
+    <div class="percentage-text">
+      <span id="votedPercent">0%</span> of students have voted
+    </div>
+
+    
+    <header class="analytics-header">
+      <h1> Election Analytics</h1>
+    </header>
+
+    <div class="analytics-form">
+      <label for="positionDropdown">Select Position:</label>
+      <select id="positionDropdown" class="position-select">
+        <option value="">-- Select Position --</option>
+        <option value="DisplayAll">DisplayAll</option>
+        <option value="President">President</option>
+        <option value="VicePresident">Vice President</option>
+        <option value="DeputySpeaker">Deputy Speaker</option>
+        <option value="Senator">Senator</option>
+        <option value="HouseRepresentatives(BSIT)">House Representatives (BSIT)</option>
+        <option value="HouseRepresentatives(BIT-CT)">House Representatives (BIT-CT)</option>
+        <option value="HouseRepresentatives(BSTM)">House Representatives (BSTM)</option>
+        <option value="HouseRepresentatives(BSHM)">House Representatives (BSHM)</option>
+        <option value="HouseRepresentatives(BEED)">House Representatives (BEED)</option>
+        <option value="HouseRepresentatives(BSED-ENG)">House Representatives (BSED-ENG)</option>
+        <option value="HouseRepresentatives(BSED-SCI)">House Representatives (BSED-SCI)</option>
+        <option value="HouseRepresentatives(BTLED)">House Representatives (BTLED)</option>
+        <option value="HouseRepresentatives(BSFT)">House Representatives (BSFT)</option>
+        <option value="HouseRepresentatives(BSA)">House Representatives (BSA)</option>
+        <option value="HouseRepresentatives(BSAGRIB)">House Representatives (BSAGRIB)</option>
+        <option value="HouseRepresentatives(BSABE)">House Representatives (BSABE)</option>
+        <option value="HouseRepresentatives(BSDC)">House Representatives (BSDC)</option>
+        <option value="HouseRepresentatives(DVM)">House Representatives (DVM)</option>
+      </select>
+    </div>
+
+    <canvas id="barChart" class="barChart"></canvas>
+    <div id="candidateList"></div>
+  </div>
+</div>
+
+
+<!-- Fetch Students -->
+<div id="fetchSection" class="hidden section fetch-section" data-section="fetch">
+
+  <div class="fetch-card">
+    <h2 class="fetch-title">iCOMELEC - Information Finder</h2>
+
+    <input type="text" id="studentIdInput" placeholder="Enter Student ID" class="fetch-input" />
+    <button onclick="fetchStudent()" class="fetch-button">Fetch Student</button>
+
+    <div id="studentDetails" class="student-details hidden">
+      <p><strong>Name:</strong> <span id="studentName"></span></p>
+      <p><strong>Course:</strong> <span id="studentCourse"></span></p>
+      <p><strong>Passcode:</strong> <span id="studentPasscode"></span></p>
+      <div id="qrCode" class="qr-container"></div>
+    </div>
+  </div>
+
+</div>
+
+
+
+<!-- Search Students -->
+<div id="studentsSection" class="hidden section vote-section" data-section="students">
+
+  <div class="vote-card">
+    <h2 class="vote-title">iCOMELEC - Vote Records</h2>
+
+    <input type="text" id="voteStudentIdInput" placeholder="Enter Student ID" class="vote-input" />
+    <button onclick="fetchVoteDetails()" class="vote-button">Fetch Record</button>
+
+    <div id="studentSection" class="hidden vote-details">
+      <h3 class="vote-subtitle">Student Voting Record</h3>
+      <p><strong>Name:</strong> <span id="voteName"></span></p>
+      <p><strong>Course:</strong> <span id="voteCourse"></span></p>
+      <p><strong>Has Voted:</strong> <span id="voteStatus"></span></p>
+      <div id="votesDisplay" class="votes-display"></div>
+    </div>
+  </div>
+
+</div>
+
+  <!-- Candidates section -->
+<div id="candidatesSection" class="section candidates-section hidden" data-section="candidates"">
+  <div class="candidates-card">
+    <h2>Candidates by Position</h2>
+    <div id="candidates-list">Loading candidates...</div>
+  </div>
+</div>
+
+  <!-- Popup modal for voters -->
+  <div id="votersPopup" class="votersPopup">
+    <button id="closePopupBtn" style="float:right; font-size:16px;">✖</button>
+    <h3 id="popupTitle">Voters</h3>
+    <ul id="votersList" class="votersList"></ul>
+  </div>
+
+
+
+<div id="authOverlay" class="authOverlay">
+  <div class="authContainer">
+    <!-- Left: Image section -->
+    <div class="authImage">
+      <img src="https://i.ibb.co/Lz3vBp3K/Asset-2.png" alt="Login Illustration" />
+    </div>
+
+    <!-- Right: Login form -->
+    <div class="authForm">
+      <!-- Logo and title at the top -->
+      <div class="authHeader">
+        <img src="https://i.ibb.co/qYp4xfLQ/Layer-0.png" alt="iCOMELEC Logo" class="form-logo" />
+        <h1 class="form-title">iCOMELECT</h1>
+      </div>
+
+      <h2>Please enter the password</h2>
+      <input type="password" id="passwordInput" placeholder="Enter password" />
+      <button onclick="checkPassword()" class="checkPassword">Submit</button>
+    </div>
+  </div>
+</div>
+
+
+  <!-- QRCode.js -->
+
+  <script src="script.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- Firebase + Script -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.7.3/firebase-app.js";
+    import { getDatabase, ref, get, onValue, off } from "https://www.gstatic.com/firebasejs/11.7.3/firebase-database.js";
+
+    // Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyA6lFyvaMaBN8Iapp27vwvMNcJfttQwe7k",
+      authDomain: "comelecdb.firebaseapp.com",
+      databaseURL: "https://comelecdb-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "comelecdb",
+      storageBucket: "comelecdb.appspot.com",
+      messagingSenderId: "175515253630",
+      appId: "1:175515253630:web:ce84de17a9700bc062d12f"
+    };
+
+    // Initialize Firebase app & database
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    // Global variables for real-time listeners
+    let currentStudentListener = null;
+    let allStudentsListener = null;
+    let analyticsListener = null;
+    let candidatesListener = null;
+    let currentAnalyticsPosition = null;
+    let barChart = null;
+
+    // Fetch student info and generate QR code with real-time updates
+    window.fetchStudent = function () {
+      const studentId = document.getElementById("studentIdInput").value.trim();
+      if (!studentId) return;
+
+      // Clear previous listener
+      if (currentStudentListener) {
+        off(currentStudentListener);
+        currentStudentListener = null;
+      }
+
+      const studentRef = ref(db, `students/${studentId}`);
+      
+      // Set up real-time listener
+      currentStudentListener = onValue(studentRef, (snapshot) => {
+        if (snapshot.exists()) {
+          const data = snapshot.val();
+          document.getElementById("studentName").textContent = data.name || "N/A";
+          document.getElementById("studentCourse").textContent = data.course || "N/A";
+          document.getElementById("studentPasscode").textContent = data.passcode || "N/A";
+          document.getElementById("studentDetails").classList.remove("hidden");
+
+          // Clear previous QR code
+          document.getElementById("qrCode").innerHTML = "";
+          // Generate QR code with QRCode.js
+          QRCode.toCanvas(data.passcode || "", { width: 400 }, function (err, canvas) {
+            if (!err) {
+              document.getElementById("qrCode").appendChild(canvas);
+            }
+          });
+        } else {
+          alert("Student ID not found.");
+          document.getElementById("studentDetails").classList.add("hidden");
+        }
+      }, (error) => {
+        console.error(error);
+        alert("Error fetching student data.");
+        document.getElementById("studentDetails").classList.add("hidden");
+      });
+    };
+
+    // Password check for auth overlay
+    window.checkPassword = function () {
+      const passwordInput = document.getElementById('passwordInput');
+      const password = passwordInput.value.trim();
+      if (password === '123') {
+        document.getElementById('authOverlay').style.display = 'none';
+      } else {
+        alert('Incorrect password. Please try again.');
+      }
+    };
+
+    // Listen for Enter key on password input
+    document.getElementById('passwordInput').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') checkPassword();
+    });
+
+    // Navigation between sections by data-section attribute
+window.navigateTo = function (section) {
+  // Show the selected section
+  const sections = document.querySelectorAll(".section");
+  sections.forEach((sec) => {
+    if (sec.dataset.section === section) {
+      sec.classList.remove("hidden");
+    } else {
+      sec.classList.add("hidden");
+    }
+  });
+
+  // Highlight the selected sidebar item using data-section
+  const sidebarItems = document.querySelectorAll("#sidebar ul li");
+  sidebarItems.forEach((li) => {
+    if (li.dataset.section === section) {
+      li.classList.add("sidebar-active");
+    } else {
+      li.classList.remove("sidebar-active");
+    }
+  });
+
+  // Real-time listeners
+  if (section === 'analytics') {
+    setupAnalyticsListener();
+  } else if (section === 'candidates') {
+    setupCandidatesListener();
+  }
+};
+
+    // Sidebar toggle based on mouse position
+(function () {
+    const sidebar = document.getElementById("sidebar");
+    let collapseTimeout;
+    let isExpanded = false;
+
+    function expandSidebar() {
+      clearTimeout(collapseTimeout);
+      sidebar.classList.remove("collapsed");
+      isExpanded = true;
+    }
+
+    function collapseSidebar() {
+      collapseTimeout = setTimeout(() => {
+        sidebar.classList.add("collapsed");
+        isExpanded = false;
+      }, 400); // Wait a bit before collapsing
+    }
+
+    function handleMouseMove(e) {
+      const nearEdgeThreshold = 80; // Increase from 40/60 to reduce jitter
+
+      if (e.clientX <= nearEdgeThreshold) {
+        if (!isExpanded) expandSidebar();
+      } else {
+        if (isExpanded) collapseSidebar();
+      }
+    }
+
+document.addEventListener("mousemove", handleSidebar);
+
+  })();
+
+    // Fetch voting details for a student with real-time updates
+    window.fetchVoteDetails = function () {
+      const studentId = document.getElementById("voteStudentIdInput").value.trim();
+      if (!studentId) return;
+
+      // Clear previous listener
+      if (currentStudentListener) {
+        off(currentStudentListener);
+        currentStudentListener = null;
+      }
+
+      const studentRef = ref(db, `students/${studentId}`);
+      
+      // Set up real-time listener
+      currentStudentListener = onValue(studentRef, (snapshot) => {
+        if (snapshot.exists()) {
+          const data = snapshot.val();
+          document.getElementById("voteName").textContent = data.name || "N/A";
+          document.getElementById("voteCourse").textContent = data.course || "N/A";
+          document.getElementById("voteStatus").textContent = data.hasVoted ? "Yes" : "No";
+
+          const votesDisplay = document.getElementById("votesDisplay");
+          votesDisplay.innerHTML = "";
+
+          if (data.votes) {
+            const positionMap = {
+              President: "President",
+              VicePresident: "Vice President",
+              DeputySpeaker: "Deputy Speaker",
+              Senator: "Senators",
+            };
+
+            const order = [
+              "President",
+              "VicePresident",
+              "DeputySpeaker",
+              "Senator",
+              "HouseRepresentatives"
+            ];
+
+            for (const posKey of order) {
+              let matchingKey = null;
+              if (posKey !== "HouseRepresentatives") {
+                if (posKey in data.votes) {
+                  matchingKey = posKey;
+                }
+              } else {
+                matchingKey = Object.keys(data.votes).find(k => k.startsWith("HouseRepresentatives"));
+              }
+
+              if (matchingKey && data.votes[matchingKey]) {
+                const displayName = posKey === "HouseRepresentatives" ? "House Representatives" : (positionMap[posKey] || "Unknown Position");
+
+                const positionHeader = document.createElement("h3");
+                positionHeader.textContent = displayName;
+                votesDisplay.appendChild(positionHeader);
+
+                const candidates = data.votes[matchingKey];
+                if (Array.isArray(candidates)) {
+                  candidates.forEach(c => {
+                    const p = document.createElement("p");
+                    p.textContent = c;
+                    p.style.marginLeft = "20px";
+                    votesDisplay.appendChild(p);
+                  });
+                } else {
+                  const p = document.createElement("p");
+                  p.textContent = candidates;
+                  p.style.marginLeft = "20px";
+                  votesDisplay.appendChild(p);
+                }
+              }
+            }
+          } else {
+            votesDisplay.textContent = "No votes data found.";
+          }
+
+          document.getElementById("studentSection").classList.remove("hidden");
+        } else {
+          alert("Student ID not found.");
+          document.getElementById("studentSection").classList.add("hidden");
+        }
+      }, (error) => {
+        console.error(error);
+        alert("Error fetching vote details.");
+        document.getElementById("studentSection").classList.add("hidden");
+      });
+    };
+
+    // Real-time analytics setup
+   function setupAnalyticsListener() {
+  if (analyticsListener) {
+    off(analyticsListener);
+    analyticsListener = null;
+  }
+
+  const studentsRef = ref(db, 'students');
+  analyticsListener = onValue(studentsRef, (snapshot) => {
+    const studentsData = snapshot.val();
+    if (!studentsData) return;
+
+    const studentIDs = Object.keys(studentsData);
+    const total = studentIDs.length;
+
+    let voted = 0;
+    studentIDs.forEach(id => {
+      const student = studentsData[id];
+      if (student.hasVoted === true) {
+        voted++;
+      }
+    });
+
+    const percent = total > 0 ? ((voted / total) * 100).toFixed(1) : 0;
+
+    // ✅ Update the DOM
+    document.getElementById('totalStudents').textContent = total;
+    document.getElementById('votedStudents').textContent = voted;
+    document.getElementById('votedBar').style.width = `${percent}%`;
+    document.getElementById('votedPercent').textContent = `${percent}%`;
+
+    // 📊 Update analytics chart if position selected
+    const currentSection = document.querySelector('.section:not(.hidden)');
+    if (currentSection && currentSection.dataset.section === 'analytics' && currentAnalyticsPosition) {
+      updateAnalyticsRealtime(currentAnalyticsPosition, snapshot);
+    }
+  });
+}
+
+    // Real-time candidates setup
+    function setupCandidatesListener() {
+      if (candidatesListener) {
+        off(candidatesListener);
+        candidatesListener = null;
+      }
+
+      const studentsRef = ref(db, 'students');
+      candidatesListener = onValue(studentsRef, (snapshot) => {
+        // Only update if candidates section is active
+        const currentSection = document.querySelector('.section:not(.hidden)');
+        if (currentSection && currentSection.dataset.section === 'candidates') {
+          renderCandidatesListRealtime(snapshot);
+        }
+      });
+    }
+
+    // Get votes for position from snapshot data
+    function getVotesForPositionFromSnapshot(position, studentsSnapshot) {
+      if (!position || !studentsSnapshot.exists()) return null;
+
+      const students = studentsSnapshot.val();
+      const voteCounts = {};
+
+      Object.values(students).forEach(student => {
+        if (!student.votes) return;
+        const votes = student.votes[position];
+        if (!votes) return;
+
+        if (Array.isArray(votes)) {
+          votes.forEach(candidateName => {
+            voteCounts[candidateName] = (voteCounts[candidateName] || 0) + 1;
+          });
+        } else {
+          voteCounts[votes] = (voteCounts[votes] || 0) + 1;
+        }
+      });
+
+      return voteCounts;
+    }
+
+    // Real-time analytics update
+    async function updateAnalyticsRealtime(position, studentsSnapshot = null) {
+      const chartCanvas = document.getElementById('barChart');
+      const candidateList = document.getElementById('candidateList');
+      
+      if (!position) {
+        candidateList.innerHTML = '<p>Please select a valid position.</p>';
+        if (barChart) {
+          barChart.destroy();
+          barChart = null;
+        }
+        chartCanvas.style.display = 'none';
+        return;
+      }
+
+      // Get snapshot if not provided
+      if (!studentsSnapshot) {
+        try {
+          studentsSnapshot = await get(ref(db, 'students'));
+        } catch (error) {
+          console.error('Error fetching students:', error);
+          return;
+        }
+      }
+
+      if (position === "DisplayAll") {
+        candidateList.innerHTML = '<p>Loading all data...</p>';
+        if (barChart) {
+          barChart.destroy();
+          barChart = null;
+        }
+        chartCanvas.style.display = 'none';
+
+        if (!studentsSnapshot.exists()) {
+          candidateList.innerHTML = '<p>No students data found.</p>';
+          return;
+        }
+
+        const students = studentsSnapshot.val();
+
+        const singlePositions = [
+          "President",
+          "VicePresident",
+          "DeputySpeaker",
+          "Senator"
+        ];
+
+        const hrSubpositions = [
+          "HouseRepresentatives(BSIT)",
+          "HouseRepresentatives(BIT-CT)",
+          "HouseRepresentatives(BSTM)",
+          "HouseRepresentatives(BSHM)",
+          "HouseRepresentatives(BEED)",
+          "HouseRepresentatives(BSED-ENG)",
+          "HouseRepresentatives(BSED-SCI)",
+          "HouseRepresentatives(BTLED)",
+          "HouseRepresentatives(BSFT)",
+          "HouseRepresentatives(BSA)",
+          "HouseRepresentatives(BSAGRIB)",
+          "HouseRepresentatives(BSABE)",
+          "HouseRepresentatives(BSDC)",
+          "HouseRepresentatives(DVM)"
+        ];
+
+        const allPositions = [...singlePositions, ...hrSubpositions];
+        const resultsByPosition = {};
+        allPositions.forEach(pos => {
+          resultsByPosition[pos] = {};
+        });
+
+        Object.values(students).forEach(student => {
+          if (!student.votes) return;
+
+          allPositions.forEach(pos => {
+            const vote = student.votes[pos];
+            if (vote) {
+              if (Array.isArray(vote)) {
+                vote.forEach(cand => {
+                  resultsByPosition[pos][cand] = (resultsByPosition[pos][cand] || 0) + 1;
+                });
+              } else {
+                resultsByPosition[pos][vote] = (resultsByPosition[pos][vote] || 0) + 1;
+              }
+            }
+          });
+        });
+
+        function displayName(pos) {
+          if (singlePositions.includes(pos)) {
+            switch (pos) {
+              case "VicePresident": return "Vice President";
+              case "DeputySpeaker": return "Deputy Speaker";
+              case "Senator": return "Senators";
+              default: return pos;
+            }
+          }
+          if (pos.startsWith("HouseRepresentatives(")) {
+            const sub = pos.match(/\(([^)]+)\)/);
+            if (sub && sub[1]) {
+              return `House Representatives (${sub[1]})`;
+            }
+            return "House Representatives";
+          }
+          return pos;
+        }
+
+        function generateBars(voteCounts) {
+          const candidates = Object.keys(voteCounts);
+          if (candidates.length === 0) return '<p>No votes found.</p>';
+
+          const votes = candidates.map(c => voteCounts[c]);
+          const maxVotes = Math.max(...votes, 1);
+
+          const colors = [
+            '#4caf50', '#2196f3', '#ff9800', '#9c27b0', '#f44336',
+            '#00bcd4', '#e91e63', '#8bc34a', '#ffc107', '#3f51b5'
+          ];
+
+          return `<ul style="list-style:none; padding:0; max-width:600px;">
+        ${candidates.map((c, i) => `
+          <li style="margin-bottom:16px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; display:flex; flex-direction: column; align-items: flex-start;">
+            <div style="font-weight:600; margin-bottom:6px; max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+              ${c}
+            </div>
+            <div style="width: 80%; background: #dcdde1; border-radius: 8px; margin-bottom: 6px; position: relative; align-self: flex-start;">
+              <div style="height: 16px; width: ${(voteCounts[c] / maxVotes) * 100}%; background-color: ${colors[i % colors.length]}; border-radius: 8px 0 0 8px;"></div>
+            </div>
+            <div style="font-size: 0.8em; color: grey;">
+              ${voteCounts[c]} votes
+            </div>
+          </li>
+        `).join('')}
+      </ul>`;
+        }
+
+        let html = '';
+        allPositions.forEach(pos => {
+          html += `
+        <div style="
+          border: 1px solid #ccc;
+          border-radius: 12px;
+          padding: 16px 20px;
+          margin-bottom: 24px;
+          background: #fafafa;
+          box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+          max-width: 700px;
+        ">
+          <h3 style="font-weight:bold; margin-top:0; margin-bottom: 16px;">${displayName(pos)}</h3>
+          ${generateBars(resultsByPosition[pos])}
+        </div>
+      `;
+        });
+
+        candidateList.innerHTML = html;
+        return;
+      }
+
+      // Single position analytics
+      candidateList.innerHTML = '<p>Loading data...</p>';
+
+      const voteCounts = getVotesForPositionFromSnapshot(position, studentsSnapshot);
+      if (!voteCounts || Object.keys(voteCounts).length === 0) {
+        candidateList.innerHTML = `<p>No votes found for ${position}.</p>`;
+        if (barChart) {
+          barChart.destroy();
+          barChart = null;
+        }
+        chartCanvas.style.display = 'none';
+        return;
+      }
+
+      const candidates = Object.keys(voteCounts);
+      const votes = candidates.map(c => voteCounts[c]);
+      const maxVotes = Math.max(...votes, 1);
+
+      const colors = [
+        '#4caf50', '#2196f3', '#ff9800', '#9c27b0', '#f44336',
+        '#00bcd4', '#e91e63', '#8bc34a', '#ffc107', '#3f51b5'
+      ];
+
+      const backgroundColors = candidates.map((_, i) => colors[i % colors.length]);
+      const borderColors = backgroundColors.map(c => c);
+
+      candidateList.innerHTML = `<h3>Candidates for ${position}:</h3><ul style="list-style:none; padding:0;">` +
+        candidates.map((c, i) => `
+      <li style="margin-bottom:16px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; display:flex; flex-direction: column; align-items: flex-start;">
+        <div style="font-weight:600; margin-bottom:6px; max-width: 200px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+          ${c}
+        </div>
+        <div style="width: 80%; background: #dcdde1; border-radius: 8px; margin-bottom: 6px; position: relative; align-self: flex-start;">
+          <div style="height: 16px; width: ${(voteCounts[c] / maxVotes) * 100}%; background-color: ${backgroundColors[i]}; border-radius: 8px 0 0 8px;"></div>
+        </div>
+        <div style="font-size: 0.8em; color: grey;">
+          ${voteCounts[c]} votes
+        </div>
+      </li>
+    `).join('') +
+        '</ul>';
+
+       chartCanvas.style.display = 'block';
+
+      if (barChart) {
+        barChart.destroy();
+        barChart = null;
+      }
+      barChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: candidates.map(() => ''),
+          datasets: [{
+            label: `Votes for ${position}`,
+            data: votes,
+            backgroundColor: backgroundColors,
+            borderColor: borderColors,
+            borderWidth: 1
+          }]
+        },
+        options: {
+          scales: {
+            x: {
+              ticks: { display: true },
+              grid: { display: false }
+            },
+            y: {
+              beginAtZero: true,
+              precision: 0
+            }
+          },
+          plugins: { legend: { display: false } }
+        }
+      });
+    }
+
+   // Update analytics function (called by dropdown)
+    async function updateAnalytics(position) {
+      currentAnalyticsPosition = position;
+      await updateAnalyticsRealtime(position);
+    }
+
+    // Position dropdown event listener
+    const positionDropdown = document.getElementById('positionDropdown');
+    const candidateList = document.getElementById('candidateList');
+    const ctx = document.getElementById('barChart').getContext('2d');
+
+    positionDropdown.addEventListener('change', (e) => {
+      updateAnalytics(e.target.value);
+    });
+
+    candidateList.innerHTML = '<p>Please select a position to see analytics.</p>';
+
+    // Candidates section with real-time updates
+    const votersPopup = document.getElementById('votersPopup');
+    const votersList = document.getElementById('votersList');
+    const popupTitle = document.getElementById('popupTitle');
+    const closePopupBtn = document.getElementById('closePopupBtn');
+    const candidatesList = document.getElementById('candidatesList');
+
+    closePopupBtn.addEventListener('click', () => {
+      votersPopup.style.display = 'none';
+      votersList.innerHTML = '';
+      popupTitle.textContent = 'Voters';
+    });
+
+    const mainPositions = [
+      "President",
+      "VicePresident", 
+      "DeputySpeaker",
+      "Senator",
+      "HouseRepresentatives"
+    ];
+
+    function isHouseRep(pos) {
+      return pos.startsWith("HouseRepresentatives(");
+    }
+
+    // Real-time candidates list rendering
+    function renderCandidatesListRealtime(studentsSnapshot = null) {
+      if (!studentsSnapshot) {
+        candidatesList.innerHTML = 'Connecting to real-time updates...';
+        return;
+      }
+
+      if (!studentsSnapshot.exists()) {
+        candidatesList.innerHTML = '<p>No students data found.</p>';
+        return;
+      }
+
+      const students = studentsSnapshot.val();
+      const data = {};
+      mainPositions.forEach(pos => data[pos] = {});
+
+      Object.entries(students).forEach(([studentId, student]) => {
+        if (!student.votes) return;
+
+        Object.entries(student.votes).forEach(([position, vote]) => {
+          if (!vote) return;
+
+          let mainPos = null;
+          if (mainPositions.includes(position)) {
+            mainPos = position;
+          } else if (isHouseRep(position)) {
+            mainPos = "HouseRepresentatives";
+          } else {
+            return;
+          }
+
+          if (!data[mainPos]) data[mainPos] = {};
+
+          if (Array.isArray(vote)) {
+  vote.forEach(candNameRaw => {
+    const candName = candNameRaw.toString().trim();
+    if (!data[mainPos][candName]) data[mainPos][candName] = [];
+    data[mainPos][candName].push({
+      id: studentId,
+      name: student.name || 'Unknown Name',
+      course: student.course || 'Unknown'
+    });
+  });
+} else {
+  const candName = vote.toString().trim();
+  if (!data[mainPos][candName]) data[mainPos][candName] = [];
+  data[mainPos][candName].push({
+    id: studentId,
+    name: student.name || 'Unknown Name',
+    course: student.course || 'Unknown'
+  });
+}
+
+        });
+      });
+
+      let html = '';
+      Object.entries(data).forEach(([position, candidates]) => {
+        const displayPosition = (position === "HouseRepresentatives") ? "House Representatives (All)" : position;
+
+        html += `<h3 style="margin-top: 24px;">${displayPosition}</h3>`;
+
+        if (Object.keys(candidates).length === 0) {
+          html += `<p>No candidates found.</p>`;
+        } else {
+          html += `<ul style="list-style:none; padding-left:0;">`;
+          Object.keys(candidates).sort().forEach(candidateName => {
+            html += `<li style="margin-bottom: 8px;">
+          <span style="display:flex; align-items:center; gap:10px;">
+  <button class="candidateBtn" style="all:unset;cursor:pointer;color:#007bff;text-decoration:underline;" data-candidate="${candidateName}">
+    ${candidateName}
+  </button>
+  <button class="courseBtn" data-candidate="${candidateName}" style="font-size: 12px; padding: 2px 6px; background-color:#2196f3; color:white; border-radius:4px; border:none; cursor:pointer;">📊</button>
+</span>
+
+        </li>`;
+          });
+          html += `</ul>`;
+        }
+      });
+
+      candidatesList.innerHTML = html;
+
+      // Re-attach event listeners
+      document.querySelectorAll('.candidateBtn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const candidateNameClicked = btn.dataset.candidate;
+
+          let voters = [];
+          for (const pos in data) {
+            if (data[pos][candidateNameClicked]) {
+              voters = data[pos][candidateNameClicked];
+              break;
+            }
+          }
+
+          showVotersPopup(candidateNameClicked, voters);
+        });
+      });
+
+
+      // Re-attach event listeners for 📊 course analytics
+document.querySelectorAll('.courseBtn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const candidateName = btn.dataset.candidate;
+    let voters = [];
+
+    for (const pos in data) {
+      if (data[pos][candidateName]) {
+        voters = data[pos][candidateName];
+        break;
+      }
+    }
+
+    showCoursePopup(candidateName, voters);
+    console.log("📊 button clicked for", candidateName);
+  });
+});
+
+    }
+
+    function showVotersPopup(candidateName, voters) {
+      popupTitle.textContent = `Voters for ${candidateName}`;
+
+      if (voters.length === 0) {
+        votersList.innerHTML = '<p>No voters found.</p>';
+      } else {
+        let html = '<div style="max-height:300px; overflow-y:auto;">';
+        voters.forEach(voter => {
+          html += `<p>${voter.id} - ${voter.name}</p>`;
+        });
+        html += '</div>';
+        votersList.innerHTML = html;
+      }
+
+      votersPopup.style.display = 'block';
+    }
+
+    // Initial render for candidates (will be replaced by real-time when section is accessed)
+    renderCandidatesListRealtime();
+
+    // Clean up listeners when page unloads
+    window.addEventListener('beforeunload', () => {
+      if (currentStudentListener) off(currentStudentListener);
+      if (allStudentsListener) off(allStudentsListener);
+      if (analyticsListener) off(analyticsListener);
+      if (candidatesListener) off(candidatesListener);
+    });
+
+
+
+
+
+
+    
+
+
+  </script>
+  <script>
+    
+function showCoursePopup(candidateName, voters) {
+  document.getElementById('coursePopupTitle').textContent = `Course Analytics for ${candidateName}`;
+
+  const courseCounts = {};
+  voters.forEach(v => {
+    const course = v.course || "Unknown";
+    courseCounts[course] = (courseCounts[course] || 0) + 1;
+  });
+
+  const total = voters.length;
+  const sortedCourses = Object.entries(courseCounts).sort((a, b) => b[1] - a[1]);
+
+  const colors = [
+    '#44bd32', '#e84118', '#0097e6', '#fbc531', '#8c7ae6',
+    '#e58e26', '#00a8ff', '#9c88ff', '#f5f6fa', '#e1b12c',
+    '#c23616', '#487eb0', '#4cd137', '#7f8fa6'
+  ];
+
+  const popupContent = sortedCourses.map(([course, count], i) => {
+    const percentage = ((count / total) * 100).toFixed(1);
+    const color = colors[i % colors.length];
+
+    return `
+      <div style="margin-bottom: 16px;">
+        <div style="font-weight: bold; margin-bottom: 4px;">${course} — ${percentage}% (${count} voter${count !== 1 ? 's' : ''})</div>
+        <div style="background: #ddd; border-radius: 8px; overflow: hidden;">
+          <div style="height: 16px; width: ${percentage}%; background-color: ${color}; border-radius: 8px;"></div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  document.getElementById('courseChart').outerHTML = `<div id="courseChart">${popupContent}</div>`;
+  document.getElementById('coursePopup').style.display = 'block';
+}
+
+
+document.getElementById('closeCoursePopupBtn').addEventListener('click', () => {
+  document.getElementById('coursePopup').style.display = 'none';
+});
+  </script>
+
+
+</body>
+
+</html>

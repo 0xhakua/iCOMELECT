@@ -1,0 +1,788 @@
+﻿@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+
+* {
+     font-family: "Poppins", sans-serif;
+}
+
+body {
+  margin: 0;
+  padding: 20px;
+  background-color: #f9f9f9;
+}
+
+h2 {
+    margin-bottom: 20px;
+    color: #273c75;
+}
+
+/* Input for student ID */
+input, select, button {
+  padding: 10px;
+  margin: 10px 0;
+  font-size: 16px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
+
+/* General button style */
+button {
+  background-color: #1e5a96;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #14487a;
+}
+
+/* Sidebar styles */
+#burger {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  font-size: 28px;
+  color: white;
+  background: #1e5a96;
+  padding: 10px 15px;
+  border-radius: 6px;
+  cursor: pointer;
+  z-index: 2000;
+}
+
+#sidebar {
+  width: 40vw;
+  max-width: 300px;
+  height: 100%;
+  background: #1e5a96;
+  color: white;
+  position: fixed;
+  top: 0;
+  left: 0;
+  padding: 20px;
+  transform: translateX(-100%);
+  transition: transform 0.3s ease-in-out;
+  z-index: 1000;
+}
+
+#sidebar:not(.collapsed) {
+  transform: translateX(0);
+}
+
+
+/* Header (logo + title) area */
+#sidebarHeader {
+  margin-bottom: 30px;
+  text-align: center;
+}
+.sidebar-header {
+  text-align: center;     /* Centers both logo and text */
+  padding: 20px 10px;
+}
+
+.sidebar-logo {
+  width: 100%;         
+  height: auto;       
+  max-height: 100px;   
+  object-fit: contain; 
+  display: block;
+  margin: 0 auto 20px; 
+}
+
+.sidebar-title {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0;
+  color: #ffffff;
+}
+
+#sidebar ul li {
+  padding: 12px 20px;
+  cursor: pointer;
+  transition: background-color 0.1s ease;
+  color: #ffffff;
+}
+
+#sidebar ul li:hover {
+  background-color: #14487a;
+}
+
+.sidebar-active {
+  background-color: #124F97;
+  color: white;
+  font-weight: bold;
+  border-radius: 8px;
+}
+
+/* List styles */
+#sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  flex-grow: 1;
+}
+
+#sidebar li {
+  padding: 10px;
+  cursor: pointer;
+}
+
+#sidebar li:hover {
+  background-color: #14487a;
+}
+
+/* Section visibility */
+.hidden {
+  display: none !important;
+}
+
+
+/* Fetch Section */
+.fetch-section {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 40px 20px;
+  background-color: #f9f9f9;
+  min-height: 100vh;
+}
+
+.fetch-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 30px 30px;
+  width: 100%;
+  max-width: 80vh;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+  text-align: center;
+}
+
+.fetch-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #0e2f5a;
+  margin-bottom: 20px;
+}
+
+.fetch-input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  font-size: 16px;
+  margin-bottom: 16px;
+  background-color: #f0f4f8;
+  transition: border 0.3s ease;
+}
+
+.fetch-input:focus {
+  border-color: #124e96;
+  background-color: #fff;
+  outline: none;
+}
+
+.fetch-button {
+  width: 100%;
+  background-color: #124e96;
+  color: white;
+  padding: 12px 0;
+  font-size: 16px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  margin-bottom: 20px;
+  transition: background-color 0.3s ease;
+}
+
+.fetch-button:hover {
+  background-color: #0c3970;
+}
+
+.student-details {
+  text-align: left;
+  background-color: #f4f6f8;
+  padding: 20px;
+  border-radius: 12px;
+  font-size: 16px;
+}
+
+.qr-container {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+
+
+
+/* Auth overlay styling */
+#authOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: #1E5A96; /* Blue background like the button */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+/* --- Stats Row --- */
+.stats-row {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  font-size: 16px;
+  margin-bottom: 16px;
+}
+
+.stats-row .right {
+  text-align: right;
+}
+
+/* --- Progress Bar --- */
+.progress-bar {
+  background: #dcdde1;
+  border-radius: 8px;
+  overflow: hidden;
+  height: 20px;
+  margin-bottom: 8px;
+  width: 100%;
+}
+
+.progress-fill {
+  height: 100%;
+  background-color: #44bd32;
+  width: 0%;
+  transition: width 0.4s ease-in-out;
+}
+
+/* --- Percentage Text --- */
+.percentage-text {
+  font-size: 14px;
+  color: #333;
+  margin-bottom: 24px;
+}
+
+/* Analytics Header Styling */
+.analytics-section {
+  display: flex;
+  justify-content: center;
+  padding: 40px 20px;
+  background-color: #f9f9f9;
+  min-height: 50vh;
+}
+
+.analytics-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 40px;
+  max-width: 900px;
+  width: 100%;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+}
+
+.analytics-header h1 {
+  font-size: 26px;
+  font-weight: 700;
+  margin-bottom: 24px;
+  color: #0e2f5a;
+}
+
+.analytics-form {
+  margin-bottom: 30px;
+}
+
+.analytics-form label {
+  display: block;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 8px;
+}
+
+.position-select {
+  width: 100%;
+  padding: 12px 16px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  appearance: none;
+  background-color: #f0f4f8;
+  transition: 0.3s ease;
+}
+
+.position-select:focus {
+  border-color: #124e96;
+  outline: none;
+  background-color: #fff;
+}
+
+.barChart {
+  width: 100% !important;
+  max-height: 400px;
+  background-color: #fafafa;
+  border-radius: 12px;
+}
+
+
+
+
+.candidate-item {
+    margin-bottom: 12px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 8px;
+}
+
+.candidate-name {
+    font-weight: bold;
+}
+
+.vote-progress {
+    height: 16px;
+    background: #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-top: 6px;
+}
+
+.vote-progress-bar {
+    height: 100%;
+    background-color: #2196F3;
+    width: 0;
+    transition: width 0.6s ease;
+}
+
+.section {
+    padding:16px; 
+    max-width: 800px; 
+    margin:auto; 
+}
+
+.section.active {
+  display: block;
+}
+
+
+/* vote records styling Styling */
+  .vote-section {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 40px 20px;
+  background-color: #f9f9f9;
+  min-height: 100vh;
+}
+
+.vote-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 30px 30px;
+  width: 100%;
+  max-width: 720px; /* Increased to match analytics/fetch width */
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+  text-align: center;
+  margin: 0 auto;
+}
+
+
+.vote-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #0e2f5a;
+  margin-bottom: 20px;
+}
+
+.vote-input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  font-size: 16px;
+  margin-bottom: 16px;
+  background-color: #f0f4f8;
+  transition: border 0.3s ease;
+}
+
+.vote-input:focus {
+  border-color: #124e96;
+  background-color: #ffffff;
+  outline: none;
+}
+
+.vote-button {
+  width: 100%;
+  background-color: #124e96;
+  color: #ffffff;
+  padding: 12px 0;
+  font-size: 16px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  margin-bottom: 20px;
+  transition: background-color 0.3s ease;
+}
+
+.vote-button:hover {
+  background-color: #0c3970;
+}
+
+.vote-details {
+  text-align: left;
+  background-color: #f4f6f8;
+  padding: 20px;
+  border-radius: 12px;
+  font-size: 16px;
+}
+
+.vote-subtitle {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 15px;
+  color: #124e96;
+}
+
+.votes-display {
+  margin-top: 15px;
+}
+
+.vote-count {
+    margin-top: 4px;
+    font-size: 0.9em;
+    color: #333;
+    font-style: italic;
+}
+
+.votersList {
+  list-style-type: none;
+  padding: 0;
+}
+
+
+
+
+
+
+.authOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.authContainer {
+  display: flex;
+  width: 800px;
+  max-width: 90%;
+  height: 60vh;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.authImage {
+  flex: 1;
+  background-color: #f5f5f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.authImage img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain; /* Ensures the image scales nicely without cropping */
+}
+.authForm {
+  flex: 1;
+  padding: 50px;
+  background: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.authForm h2 {
+  margin-bottom: 20px;
+}
+
+.authForm input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+}
+
+.checkPassword {
+  padding: 10px 20px;
+  background-color: #1e5a96;
+  color: white;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.authHeader {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.form-logo {
+  height: 40px;
+  margin-right: 10px;
+}
+
+.form-title {
+  font-size: 1rem;
+  color: #1e5a96;
+  margin: 0;
+}
+
+/*Candidates Styling*/
+
+
+/* --- Candidates Section Layout --- */
+.candidates-section {
+  display: flex;
+  justify-content: center;
+  padding: 40px 16px;
+  background-color: #f9f9f9;
+  min-height: 100vh;
+}
+
+.candidates-card {
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 30px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+  width: 100%;
+  max-width: 720px;
+  overflow-y: auto;
+  max-height: 600px;
+}
+
+.candidates-list ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.candidates-list li {
+  display: flex;
+  align-items: center;
+  margin-bottom: 14px;
+  padding: 8px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.candidates-list .name {
+  flex: 1 1 150px;
+  font-weight: 600;
+  font-size: 14px;
+  color: #2f3640;
+}
+
+.candidates-list .bar {
+  flex: 3 1 auto;
+  height: 18px;
+  margin: 0 10px;
+  background-color: #dcdde1;
+  border-radius: 10px;
+  position: relative;
+  overflow: hidden;
+}
+
+.candidates-list .bar-fill {
+  height: 100%;
+  background-color: #44bd32;
+  border-radius: 10px;
+  transition: width 0.3s ease-in-out;
+}
+
+.candidates-list .votes {
+  flex: 0 0 40px;
+  text-align: right;
+  font-weight: 600;
+  color: #353b48;
+  font-size: 13px;
+}
+
+.candidates-card h2 {
+  margin-bottom: 20px;
+  font-size: 22px;
+  color: #2f3640;
+}
+
+.candidates-card b {
+  display: block;
+  font-size: 18px;
+  margin-top: 20px;
+  margin-bottom: 6px;
+  color: #273c75;
+}
+
+.candidates-list a {
+  display: inline-block;
+  margin-left: 15px;
+  margin-bottom: 6px;
+  color: #1e5a96;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.candidates-list a:hover {
+  text-decoration: underline;
+  color: #14487a;
+}
+
+/* --- Popup Modal --- */
+.votersPopup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  border-radius: 12px;
+  padding: 24px 20px;
+  display: none;
+  z-index: 1000;
+  box-shadow: 0 12px 32px rgba(0,0,0,0.25);
+  width: 90%;
+  max-width: 500px;
+}
+
+#votersPopup h3 {
+  margin-top: 0;
+  font-size: 20px;
+  color: #2f3640;
+}
+
+#votersList {
+  max-height: 300px;
+  overflow-y: auto;
+  padding-left: 20px;
+}
+
+#votersList li {
+  padding: 6px 0;
+  border-bottom: 1px solid #eee;
+  font-size: 14px;
+  color: #353b48;
+}
+
+#closePopupBtn {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  float: right;
+  margin-top: -10px;
+  margin-right: -10px;
+}
+
+
+
+
+.hidden {
+    display: none !important;
+}
+
+
+@media (max-width: 480px) { 
+    #studentDetails {
+    flex-direction: column;
+    gap: 16px;
+    padding: 16px;
+  }
+
+  .authForm {
+    padding: 20px;
+  }
+
+  .authContainer {
+    flex-direction: column;
+    height: auto;
+  }
+
+  .authImage {
+    height: 200px;
+  }
+}
+
+@media (max-width: 600px) {
+  .section, #fetchSection, #analyticsSection {
+    padding: 16px 10px;
+  }
+
+  #candidateList li {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  #candidateList .bar {
+    width: 100%;
+    margin: 8px 0;
+  }
+
+  #sidebar {
+    width: 80vw;
+  }
+}
+
+
+/* Phones and small tablets */
+@media (max-width: 768px) { 
+    #studentDetails {
+    flex-direction: column;
+    gap: 16px;
+    padding: 16px;
+  }
+
+  .authForm {
+    padding: 20px;
+  }
+
+  .authContainer {
+    flex-direction: column;
+    height: auto;
+  }
+
+  .authImage {
+    height: 200px;
+  }
+}
+
+/* Tablets and small desktops */
+@media (max-width: 1024px) {
+  #analyticsSection.section {
+    margin-left: 320px; /* if sidebar shows */
+  }
+
+  .authContainer {
+    height: auto;
+  }
+
+  .barChart {
+    height: 250px;
+  }
+
+  #studentDetails {
+    gap: 20px;
+  }
+ }
